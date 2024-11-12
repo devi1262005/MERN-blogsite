@@ -81,8 +81,7 @@ app.post("/login", async (req, res) => {
     });
 });
 
-app.post("/get_user",async(req,res)=>{
-})
+app.post()
 
 app.listen(8000, () => {
     console.log('Server running on port 8000');

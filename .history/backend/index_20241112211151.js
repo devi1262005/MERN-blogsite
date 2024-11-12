@@ -71,18 +71,11 @@ app.post("/login", async (req, res) => {
         {
             expiresIn:"72h",
         }
-    );
 
-    return res.json({
-        error:false,
-        message:"Login Successful",
-        user:{fullName:user.fullName, email:user.email},
-        accessToken,
-    });
+    )
 });
 
-app.post("/get_user",async(req,res)=>{
-})
+
 
 app.listen(8000, () => {
     console.log('Server running on port 8000');

@@ -75,14 +75,10 @@ app.post("/login", async (req, res) => {
 
     return res.json({
         error:false,
-        message:"Login Successful",
-        user:{fullName:user.fullName, email:user.email},
-        accessToken,
-    });
+        message:"Login Successful"
 });
 
-app.post("/get_user",async(req,res)=>{
-})
+
 
 app.listen(8000, () => {
     console.log('Server running on port 8000');

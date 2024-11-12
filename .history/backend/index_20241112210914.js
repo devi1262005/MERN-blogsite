@@ -63,26 +63,11 @@ app.post("/login", async (req, res) => {
     }
     const isPasswordValid=await bcrypt.compare(password, user.password);
     if(!isPasswordValid){
-        return res.status(400).json({ error: true, message: "Invalid Credentials"});
+        return res.status(400).json({ error: true, message: "Password is not valid." });
     }
-    const accessToken=jwt.sign(
-        {userId:user._id},
-        process.env.ACCESS_TOKEN_SECRET,
-        {
-            expiresIn:"72h",
-        }
-    );
-
-    return res.json({
-        error:false,
-        message:"Login Successful",
-        user:{fullName:user.fullName, email:user.email},
-        accessToken,
-    });
 });
 
-app.post("/get_user",async(req,res)=>{
-})
+
 
 app.listen(8000, () => {
     console.log('Server running on port 8000');

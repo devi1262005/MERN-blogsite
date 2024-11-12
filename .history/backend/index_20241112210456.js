@@ -52,37 +52,9 @@ app.post("/create_account", async (req, res) => {
     }
 });
 
-app.post("/login", async (req, res) => {
-    const {email,password}=req.body;
-    if(!email||!password){
-        return res.status(400).json({ error: true, message: "Email and password are required." });
-    }
-    const user= await   User.findOne({ email: email});
-    if(!user){
-        return res.status(400).json({ error: true, message: "User does not exist." });
-    }
-    const isPasswordValid=await bcrypt.compare(password, user.password);
-    if(!isPasswordValid){
-        return res.status(400).json({ error: true, message: "Invalid Credentials"});
-    }
-    const accessToken=jwt.sign(
-        {userId:user._id},
-        process.env.ACCESS_TOKEN_SECRET,
-        {
-            expiresIn:"72h",
-        }
-    );
+app.post("/login", async)
 
-    return res.json({
-        error:false,
-        message:"Login Successful",
-        user:{fullName:user.fullName, email:user.email},
-        accessToken,
-    });
-});
 
-app.post("/get_user",async(req,res)=>{
-})
 
 app.listen(8000, () => {
     console.log('Server running on port 8000');

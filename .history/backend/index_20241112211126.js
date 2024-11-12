@@ -67,22 +67,12 @@ app.post("/login", async (req, res) => {
     }
     const accessToken=jwt.sign(
         {userId:user._id},
-        process.env.ACCESS_TOKEN_SECRET,
-        {
-            expiresIn:"72h",
-        }
-    );
+        process.env
 
-    return res.json({
-        error:false,
-        message:"Login Successful",
-        user:{fullName:user.fullName, email:user.email},
-        accessToken,
-    });
+    )
 });
 
-app.post("/get_user",async(req,res)=>{
-})
+
 
 app.listen(8000, () => {
     console.log('Server running on port 8000');

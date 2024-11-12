@@ -81,7 +81,7 @@ app.post("/login", async (req, res) => {
     });
 });
 
-app.post("/get_user",async(req,res)=>{
+app.post("/get_user",async(req,res)=>{}
 })
 
 app.listen(8000, () => {

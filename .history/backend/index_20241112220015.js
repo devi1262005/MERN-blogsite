@@ -13,6 +13,10 @@ const app = express();
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
+
+
+
+
 app.post("/create_account", async (req, res) => {
     try {
         const { fullName, email, password } = req.body;
@@ -94,9 +98,6 @@ app.get("/get_user",authenticateToken, async(req,res)=>{
         message:"",
     });
 });
-
-app.get("/get_blog_story",authenticateToken, async(req,res)=>{
-})
 
 app.listen(8000, () => {
     console.log('Server running on port 8000');

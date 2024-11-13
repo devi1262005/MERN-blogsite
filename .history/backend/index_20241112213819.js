@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const {authenticateToken} =require("./utilities");
 
 mongoose.connect(config.connectionString);
 const User = require("./models/user_model");
@@ -82,20 +81,7 @@ app.post("/login", async (req, res) => {
     });
 });
 
-app.get("/get_user",authenticateToken, async(req,res)=>{
-    const{userId}=req.user
-    const isUser=await User.findOne({_id:userId});
-
-    if(!isUser){
-        return res.sendStatus(401);
-    }
-    return res.json({
-        user:isUser,
-        message:"",
-    });
-});
-
-app.get("/get_blog_story",authenticateToken, async(req,res)=>{
+app.post("/get_user",async(req,res)=>{
 })
 
 app.listen(8000, () => {

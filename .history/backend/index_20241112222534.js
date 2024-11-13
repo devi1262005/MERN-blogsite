@@ -95,9 +95,6 @@ app.get("/get_user",authenticateToken, async(req,res)=>{
     });
 });
 
-app.get("/get_blog_story",authenticateToken, async(req,res)=>{
-})
-
 app.listen(8000, () => {
     console.log('Server running on port 8000');
 });

@@ -82,7 +82,7 @@ app.post("/login", async (req, res) => {
     });
 });
 
-app.get("/get_user",authenticateToken, async(req,res)=>{
+app.post("/get_user",authenticateToken, async(req,res)=>{
     const{userId}=req.user
     const isUser=await User.findOne({_id:userId});
 
@@ -94,9 +94,6 @@ app.get("/get_user",authenticateToken, async(req,res)=>{
         message:"",
     });
 });
-
-app.get("/get_blog_story",authenticateToken, async(req,res)=>{
-})
 
 app.listen(8000, () => {
     console.log('Server running on port 8000');

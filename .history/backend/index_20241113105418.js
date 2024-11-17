@@ -53,44 +53,48 @@ app.post("/create_account", async (req, res) => {
         return res.status(500).json({ error: true, message: "Something went wrong, please try again." });
     }
 });
-app.post("/login", async (req, res) => {
-    try {
-        const { email, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ error: true, message: "Email and password are required." });
-        }
-
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ error: true, message: "User does not exist." });
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(400).json({ error: true, message: "Invalid Credentials" });
-        }
-
-        const accessToken = jwt.sign(
-            { userId: user._id },
-            process.env.ACCESS_TOKEN_SECRET,
-            {
-                expiresIn: "72h",
-            }
-        );
-
-        return res.json({
-            error: false,
-            message: "Login Successful",
-            user: { fullName: user.fullName, email: user.email },
-            accessToken,
-        });
-    } catch (error) {
-        console.error("Error during login:", error);
-        return res.status(500).json({ error: true, message: "Something went wrong during login." });
+app.get("/login", async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: true, message: "Email and password are required." });
     }
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(400).json({ error: true, message: "User does not exist." });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        return res.status(400).json({ error: true, message: "Invalid Credentials" });
+    }
+    const accessToken = jwt.sign(
+        { userId: user._id },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: "72h",
+        }
+    );
+
+    return res.json({
+        error: false,
+        message: "Login Successful",
+        user: { fullName: user.fullName, email: user.email },
+        accessToken,
+    });
 });
 
+app.post("/get_user", authenticateToken, async (req, res) => {
+    const { userId } = req.user;
+    const isUser = await User.findOne({ _id: userId });
+
+    if (!isUser) {
+        return res.sendStatus(401);
+    }
+    return res.json({
+        user: isUser,
+        message: "",
+    });
+});
 
 app.post("/add_blog_story", authenticateToken, async (req, res) => {
     const { title, story, visitedLocation, imageUrl, visitedDate } = req.body;

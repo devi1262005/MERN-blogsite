@@ -7,13 +7,16 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { authenticateToken } = require("./utilities");
 
-mongoose.connect(config.connectionString);
+// Connect to MongoDB
+mongoose.connect(config.connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
 const User = require("./models/user_model");
-const BlogStory = require("./models/blog_model"); // Capitalize to indicate the model
+const BlogStory = require("./models/blog_l"); // Ensure BlogStory model is correctly imported
+
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
+// Create Account Route
 app.post("/create_account", async (req, res) => {
     try {
         const { fullName, email, password } = req.body;
@@ -53,55 +56,65 @@ app.post("/create_account", async (req, res) => {
         return res.status(500).json({ error: true, message: "Something went wrong, please try again." });
     }
 });
+
+// Login Route
 app.post("/login", async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({ error: true, message: "Email and password are required." });
-        }
-
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ error: true, message: "User does not exist." });
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(400).json({ error: true, message: "Invalid Credentials" });
-        }
-
-        const accessToken = jwt.sign(
-            { userId: user._id },
-            process.env.ACCESS_TOKEN_SECRET,
-            {
-                expiresIn: "72h",
-            }
-        );
-
-        return res.json({
-            error: false,
-            message: "Login Successful",
-            user: { fullName: user.fullName, email: user.email },
-            accessToken,
-        });
-    } catch (error) {
-        console.error("Error during login:", error);
-        return res.status(500).json({ error: true, message: "Something went wrong during login." });
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: true, message: "Email and password are required." });
     }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(400).json({ error: true, message: "User does not exist." });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        return res.status(400).json({ error: true, message: "Invalid Credentials" });
+    }
+
+    const accessToken = jwt.sign(
+        { userId: user._id },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "72h" }
+    );
+
+    return res.json({
+        error: false,
+        message: "Login Successful",
+        user: { fullName: user.fullName, email: user.email },
+        accessToken,
+    });
 });
 
+// Get User Route (Protected)
+app.get("/get_user", authenticateToken, async (req, res) => {
+    const { userId } = req.user;
+    const user = await User.findById(userId);
 
+    if (!user) {
+        return res.status(401).json({ error: true, message: "User not found" });
+    }
+    return res.json({
+        user: { fullName: user.fullName, email: user.email },
+        message: "User details retrieved successfully",
+    });
+});
+
+// Add Blog Story Route (Protected)
 app.post("/add_blog_story", authenticateToken, async (req, res) => {
     const { title, story, visitedLocation, imageUrl, visitedDate } = req.body;
     const { userId } = req.user;
+
     if (!title || !story || !visitedLocation || !imageUrl || !visitedDate) {
         return res.status(400).json({ error: true, message: "All fields are required" });
     }
+
     const parsedVisitedDate = new Date(parseInt(visitedDate));
 
     try {
-        const blogStoryEntry = new BlogStory({  // Renamed variable to `blogStoryEntry`
+        const blogStory = new BlogStory({
             title,
             story,
             visitedLocation,
@@ -109,13 +122,17 @@ app.post("/add_blog_story", authenticateToken, async (req, res) => {
             imageUrl,
             visitedDate: parsedVisitedDate,
         });
-        await blogStoryEntry.save();
-        return res.json({ story: blogStoryEntry, message: "Blog story added successfully" });
+        await blogStory.save();
+        return res.json({ story: blogStory, message: "Blog story added successfully" });
     } catch (error) {
-        res.status(400).json({ error: true, message: error.message });
+        console.error("Error adding blog story:", error);
+        res.status(500).json({ error: true, message: "Could not add blog story, please try again." });
     }
 });
 
-app.listen(8000);
+// Start the Server
+app.listen(8000, () => {
+    console.log("Server is running on port 8000");
+});
 
 module.exports = app;

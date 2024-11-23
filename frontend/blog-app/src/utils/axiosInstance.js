@@ -1,0 +1,31 @@
+import axios from "axios";
+import { BASE_URL } from "./constants";
+
+const axiosInstance = axios.create({
+  baseURL: BASE_URL,
+  timeout: 1000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Correctly use interceptors for request
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const accessToken = localStorage.getItem('token');  // Get the token from localStorage
+     // Log token value for debugging
+    
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;  // Set the Authorization header
+    } else {
+      console.error("Access token not available.");
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+
+export default axiosInstance;

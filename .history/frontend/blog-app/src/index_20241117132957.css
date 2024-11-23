@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Poppins", "sans-serif";
+  }
+  body {
+    background-color: #fdfeff;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  .container {
+    @apply flex min-h-screen bg-[#e9fcfc];
+  }
+
+  .left-section {
+    @apply flex-1 relative bg-cover bg-center;
+    background-image: url("https://via.placeholder.com/500x500.png"); /* Replace with your image */
+  }
+
+  .overlay {
+    @apply absolute text-white bottom-1/4 left-10;
+  }
+
+  .title {
+    @apply text-2xl font-bold;
+  }
+
+  .subtitle {
+    @apply mt-2 text-base;
+  }
+
+  .right-section {
+    @apply flex flex-col justify-center items-center p-8 bg-white rounded-lg shadow-lg flex-1;
+  }
+
+  .login-title {
+    @apply text-xl mb-4;
+  }
+
+  .form {
+    @apply w-full max-w-md flex flex-col;
+  }
+
+  .input {
+    @apply w-full p-2 mb-4 border border-gray-300 rounded-md;
+  }
+
+  .password-container {
+    @apply relative flex items-center;
+  }
+
+  .toggle-button {
+    @apply absolute right-2 bg-transparent border-none cursor-pointer;
+  }
+
+  .login-button {
+    @apply p-2 bg-[#00a1b3] text-white font-bold rounded-md cursor-pointer;
+  }
+
+  .or-text {
+    @apply my-4 text-gray-500;
+  }
+    
+  .error-text{
+@apply text0color:red;
+  }
+  .create-account-button {
+    @apply p-2 bg-[#e3f5f5] text-[#00a1b3] font-bold rounded-md cursor-pointer;
+  }
+}

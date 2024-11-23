@@ -1,0 +1,40 @@
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import React, { useState } from 'react';
+import addBlogForm from '../utils/addBlogForm';
+import Home from './Home';
+import { Container, Grid, Box } from '@mui/material';
+
+const App = () => {
+  const [stories, setStories] = useState([]);
+
+  const handleStoryAdded = (newStory) => {
+    setStories([...stories, newStory]);
+  };
+
+  const handleFavoriteToggle = (id, newStatus) => {
+    setStories(stories.map(story =>
+      story.id === id ? { ...story, isFavorite: newStatus } : story
+    ));
+  };
+
+  return (
+    <Container sx={{ padding: 3 }}>
+      <addBlogForm onStoryAdded={handleStoryAdded} />
+      <Box sx={{ marginTop: 3 }}>
+        <Grid container spacing={2}>
+          {stories.map((story) => (
+            <Grid item xs={12} sm={6} md={4} key={story.id}>
+              <BlogCard
+                {...story}
+                onFavoriteToggle={handleFavoriteToggle}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    </Container>
+  );
+};
+
+export default App;
+
